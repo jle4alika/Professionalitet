@@ -1,0 +1,7 @@
+sqlalchemy
+aiosqlite
+fastapi
+fastapi-jwt
+websocket
+python-dotenv
+pydantic-settings
