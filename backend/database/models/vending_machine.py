@@ -1,25 +1,33 @@
 """
-Landlord database table
+VendingMachine database table
 """
 
 import datetime
-from sqlalchemy import func
+from sqlalchemy import func, Float
 from sqlalchemy import BigInteger, String
 from sqlalchemy.dialects.sqlite import DATETIME
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.database.db import Base
+from backend.database.db import Base, idpk, created_time, updated_time
 
-
-class Landlord(Base):
+class VendingMachine(Base):
     """
-    Landlord table
+    VendingMachine table
     """
 
-    __tablename__ = "landlords"
+    __tablename__ = "vending_machines"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, unique=True)
+    id: Mapped[idpk]
 
-    created_time: Mapped[datetime.datetime] = mapped_column(
-        DATETIME, default=func.now()
+    title: Mapped[str]
+    amount_in_hour: Mapped[float]
+
+    rented: Mapped[bool] = mapped_column(default=False)
+
+    orders: Mapped[list["Order"]] = relationship(
+        back_populates="vending_machine",
+        order_by="Order.expired.desc()",
     )
+
+    created_time: Mapped[created_time]
+    updated_time: Mapped[updated_time]

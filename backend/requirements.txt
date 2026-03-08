@@ -5,3 +5,6 @@ fastapi-jwt
 websocket
 python-dotenv
 pydantic-settings
+authx
+alembic
+black

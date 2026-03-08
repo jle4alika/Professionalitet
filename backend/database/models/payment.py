@@ -3,23 +3,49 @@ Landlord database table
 """
 
 import datetime
-from sqlalchemy import func
+import enum
+
+from sqlalchemy import func, ForeignKey, Float
 from sqlalchemy import BigInteger, String
 from sqlalchemy.dialects.sqlite import DATETIME
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.database.db import Base
+from backend.database.db import Base, idpk, created_time, updated_time
 
+
+class PaymentMethod(enum.Enum):
+    sbp = "SBP"
+    card = "CARD"
+
+class PaymentType(enum.Enum):
+    rent = "rent"
+    extension = "extension"
 
 class Payment(Base):
     """
-    Payment table
+    Payment table (Оплата)
     """
 
-    __tablename__ = "payments"
+    __tablename__ = "payment"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, unique=True)
+    id: Mapped[idpk]
 
-    created_time: Mapped[datetime.datetime] = mapped_column(
-        DATETIME, default=func.now()
-    )
+    amount: Mapped[float]
+    currency: Mapped[str] = mapped_column(String, default="RUB")
+    payment_method: Mapped[PaymentMethod]
+    payment_type: Mapped[PaymentType] = mapped_column(default="rent")
+    success: Mapped[bool] = mapped_column(default=False)
+
+    created_time: Mapped[created_time]
+    updated_time: Mapped[updated_time]
+
+    order_id: Mapped[int] = mapped_column(ForeignKey("order.id", ondelete="CASCADE"))
+    order: Mapped["Order"] = (relationship(
+        back_populates="payment",
+    ))
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    user: Mapped["User"] = (relationship(
+        back_populates="payments",
+    ))
