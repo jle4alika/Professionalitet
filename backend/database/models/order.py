@@ -32,10 +32,10 @@ class Order(Base):
         back_populates="orders",
     )
 
-    payment_id: Mapped[int] = mapped_column(ForeignKey("payments.id", ondelete="CASCADE"))
     payment: Mapped[list["Payment"]] = relationship(
         back_populates="order",
         order_by="Payment.success.desc()",
+        lazy='joined'
     )
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))

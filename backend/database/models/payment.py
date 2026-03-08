@@ -27,7 +27,7 @@ class Payment(Base):
     Payment table (Оплата)
     """
 
-    __tablename__ = "payment"
+    __tablename__ = "payments"
 
     id: Mapped[idpk]
 
@@ -40,7 +40,7 @@ class Payment(Base):
     created_time: Mapped[created_time]
     updated_time: Mapped[updated_time]
 
-    order_id: Mapped[int] = mapped_column(ForeignKey("order.id", ondelete="CASCADE"))
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id", ondelete="CASCADE"))
     order: Mapped["Order"] = (relationship(
         back_populates="payment",
     ))

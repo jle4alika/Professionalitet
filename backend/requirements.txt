@@ -8,3 +8,5 @@ pydantic-settings
 authx
 alembic
 black
+asyncpg
+psycopg2-binary

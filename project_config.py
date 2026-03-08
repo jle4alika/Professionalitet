@@ -19,6 +19,12 @@ class Settings(BaseSettings):
         # postgresql+asyncpg://postgres:postgres@localhost:5432/sa
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
+    @property
+    def DATABASE_URL_psycopg(self):
+        # DSN
+        # postgresql+psycopg://postgres:postgres@localhost:5432/sa
+        return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
     class Config:
         """
         Настройки конфигурации Pydantic

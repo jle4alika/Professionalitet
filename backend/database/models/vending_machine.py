@@ -27,6 +27,7 @@ class VendingMachine(Base):
     orders: Mapped[list["Order"]] = relationship(
         back_populates="vending_machine",
         order_by="Order.expired.desc()",
+        lazy='selectin'
     )
 
     created_time: Mapped[created_time]

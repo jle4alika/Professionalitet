@@ -3,9 +3,9 @@ Base SQLAlchemy file
 """
 import datetime
 
-from sqlalchemy import DATETIME
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, mapped_column
 from project_config import settings
 from typing import Annotated
 
@@ -18,14 +18,14 @@ async_session = async_sessionmaker(
     # max_overflow=10,
 )
 
-idpk = Annotated[Mapped[int], mapped_column(primary_key=True)]
+idpk = Annotated[int, mapped_column(primary_key=True, autoincrement=True)]
 
 created_time = Annotated[datetime.datetime, mapped_column(
-        DATETIME, server_default="TIMEZONE('utc', now())"
+        server_default=text("TIMEZONE('utc', now())")
 )]
 
 updated_time = Annotated[datetime.datetime, mapped_column(
-    DATETIME, server_default="TIMEZONE('utc', now())",
+    server_default=text("TIMEZONE('utc', now())"),
     onupdate=datetime.datetime.utcnow
 )]
 
@@ -49,6 +49,6 @@ async def async_main() -> None:
     Creating tables
     :return:
     """
-    async with engine.begin() as conn:
+    async with engine.connect() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)

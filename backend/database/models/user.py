@@ -39,10 +39,13 @@ class User(Base):
     orders: Mapped[list["Order"]] = relationship(
         back_populates="user",
         order_by="Order.expired.desc()",
+        lazy='selectin'
     )
 
     payments: Mapped[list["Payment"]] = relationship(
         back_populates="user",
+        order_by="Payment.success.desc()",
+        lazy='selectin'
     )
 
     created_time: Mapped[created_time]
