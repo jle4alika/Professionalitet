@@ -10,3 +10,4 @@ alembic
 black
 asyncpg
 psycopg2-binary
+uvicorn
