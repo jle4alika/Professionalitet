@@ -1,10 +1,14 @@
 sqlalchemy
 aiosqlite
 fastapi
+pytest
+pytest-asyncio
+httpx
 fastapi-jwt
 websocket
 python-dotenv
 pydantic-settings
+pydantic[email]
 authx
 alembic
 black

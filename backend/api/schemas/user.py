@@ -10,11 +10,10 @@ class UsersAddDTO(BaseModel):
     username: str
     password: str
     email: EmailStr
-    phone_number: Optional[str]
-    first_name: Optional[str]
-    last_name: Optional[str]
-
-    status: Optional[str]
+    phone_number: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    status: Optional[str] = None
 
 
 class UsersDTO(BaseModel):

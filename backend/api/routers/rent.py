@@ -32,7 +32,7 @@ async def get_active_rents(
         query = query.where(Order.user_id == user_id)
 
     result = await session.execute(query)
-    orders = result.scalars().all()
+    orders = result.unique().scalars().all()
 
     return [OrdersDTO.model_validate(o) for o in orders]
 

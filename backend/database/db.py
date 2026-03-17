@@ -10,11 +10,17 @@ from sqlalchemy.orm import DeclarativeBase, mapped_column
 from project_config import settings
 from typing import Annotated
 
-engine = create_async_engine(settings.DATABASE_URL_asyncpg)
+_database_url = settings.DATABASE_URL_asyncpg
+_use_sqlite = "sqlite" in _database_url
+
+engine = create_async_engine(
+    _database_url,
+    echo=not _use_sqlite,  # Отключаем SQL-логи в тестах
+)
 
 async_session = async_sessionmaker(
     engine,
-    echo=True,
+    expire_on_commit=False,  # Нужно для тестовых fixtures (доступ к .id после commit)
     # pool_size=5,
     # max_overflow=10,
 )
@@ -27,16 +33,30 @@ async def get_session():
 
 idpk = Annotated[int, mapped_column(primary_key=True, autoincrement=True)]
 
-created_time = Annotated[
-    datetime.datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"))
-]
-
-updated_time = Annotated[
-    datetime.datetime,
-    mapped_column(
-        server_default=text("TIMEZONE('utc', now())"), onupdate=datetime.datetime.utcnow
-    ),
-]
+if _use_sqlite:
+    created_time = Annotated[
+        datetime.datetime,
+        mapped_column(default=datetime.datetime.utcnow),
+    ]
+    updated_time = Annotated[
+        datetime.datetime,
+        mapped_column(
+            default=datetime.datetime.utcnow,
+            onupdate=datetime.datetime.utcnow,
+        ),
+    ]
+else:
+    created_time = Annotated[
+        datetime.datetime,
+        mapped_column(server_default=text("TIMEZONE('utc', now())")),
+    ]
+    updated_time = Annotated[
+        datetime.datetime,
+        mapped_column(
+            server_default=text("TIMEZONE('utc', now())"),
+            onupdate=datetime.datetime.utcnow,
+        ),
+    ]
 
 
 class Base(DeclarativeBase):

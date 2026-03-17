@@ -35,7 +35,7 @@ async def get_orders(
         query = query.where(Order.expired == expired)
 
     result = await session.execute(query)
-    orders = result.scalars().all()
+    orders = result.unique().scalars().all()
 
     return [OrdersDTO.model_validate(o) for o in orders]
 
@@ -45,7 +45,7 @@ async def get_order(order_id: int, session: db_session) -> OrdersDTO:
     """Получить заказ по ID."""
     query = select(Order).where(Order.id == order_id)
     result = await session.execute(query)
-    order = result.scalar_one_or_none()
+    order = result.unique().scalars().one_or_none()
 
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -93,7 +93,7 @@ async def update_order(
     """Обновить заказ (продление или отметка истечения)."""
     query = select(Order).where(Order.id == order_id)
     result = await session.execute(query)
-    order = result.scalar_one_or_none()
+    order = result.unique().scalars().one_or_none()
 
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -131,7 +131,7 @@ async def delete_order(order_id: int, session: db_session) -> MessageResponse:
     """Удалить/отменить заказ."""
     query = select(Order).where(Order.id == order_id)
     result = await session.execute(query)
-    order = result.scalar_one_or_none()
+    order = result.unique().scalars().one_or_none()
 
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
