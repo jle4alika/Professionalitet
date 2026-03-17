@@ -126,9 +126,7 @@ def upgrade() -> None:
         ),
         sa.Column("order_id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["order_id"], ["orders.id"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["order_id"], ["orders.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )

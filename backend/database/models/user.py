@@ -13,9 +13,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.database.db import Base, idpk, created_time, updated_time
 
+
 class UserStatus(enum.Enum):
     tenant = "tenant"
     landlord = "landlord"
+
 
 class User(Base):
     """
@@ -26,26 +28,22 @@ class User(Base):
 
     id: Mapped[idpk]
 
-    username: Mapped[str]
+    username: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
-    email: Mapped[str]
+    email: Mapped[str] = mapped_column(unique=True)
     phone_number: Mapped[Optional[str]]
     first_name: Mapped[Optional[str]]
     last_name: Mapped[Optional[str]]
 
     balance: Mapped[float] = mapped_column(Float, default=0)
-    status: Mapped[UserStatus] = mapped_column(default="tenant")
+    status: Mapped[UserStatus] = mapped_column(default=UserStatus.tenant)
 
     orders: Mapped[list["Order"]] = relationship(
-        back_populates="user",
-        order_by="Order.expired.desc()",
-        lazy='selectin'
+        back_populates="user", order_by="Order.expired.desc()", lazy="selectin"
     )
 
     payments: Mapped[list["Payment"]] = relationship(
-        back_populates="user",
-        order_by="Payment.success.desc()",
-        lazy='selectin'
+        back_populates="user", order_by="Payment.success.desc()", lazy="selectin"
     )
 
     created_time: Mapped[created_time]
